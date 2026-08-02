@@ -807,13 +807,14 @@ void MSIMysticLight185Controller::SetLedColor
     unsigned char   blu
     )
 {
-    if(per_led_mode == DIRECT_MODE_PER_LED)
-    {
-        Color* zone_data = GetPerLedZoneData(zone);
+// Remove or comment out this check:
+// if(per_led_mode == DIRECT_MODE_PER_LED) 
+// {
+    Color* zone_data = GetPerLedZoneData(zone);
 
-        if(zone_data != nullptr)
-        {
-            int maxSize = (int)GetMaxDirectLeds(zone);
+    if(zone_data != nullptr)
+    {
+        int maxSize = (int)GetMaxDirectLeds(zone);
 
             if(sync_direct_mode)
             {
@@ -1179,15 +1180,9 @@ size_t MSIMysticLight185Controller::GetMaxDirectLeds
         case MSI_ZONE_J_PIPE_2:
             return numof_pipe2_leds;
 
-        case MSI_ZONE_J_RAINBOW_1:
-            if(per_led_mode == DIRECT_MODE_PER_LED)
-            {
-                return JRAINBOW1_MAX_LED_COUNT;
-            }
-            else
-            {
-                return 1;
-            }
+case MSI_ZONE_J_RAINBOW_1:
+    // HACK: Force 20 LEDs for JRAINBOW1 regardless of controller mode
+    return 20;
         case MSI_ZONE_J_RAINBOW_2:
         case MSI_ZONE_J_RAINBOW_3:
             if(per_led_mode == DIRECT_MODE_PER_LED)
@@ -1284,11 +1279,12 @@ void MSIMysticLight185Controller::SelectPerLedProtocol()
         enable_per_led_msg.on_board_led.colorFlags = PER_LED_BASIC_SYNC_MODE;
     }
 
-    if(direct_mode)
-    {
-        if(per_led_mode == DIRECT_MODE_PER_LED)
-        {
-            hid_send_feature_report(dev, (unsigned char*)&enable_per_led_msg, sizeof(enable_per_led_msg));
-        }
-    }
+if(direct_mode)
+{
+    // Remove or comment out this check:
+    // if(per_led_mode == DIRECT_MODE_PER_LED)
+    // {
+        hid_send_feature_report(dev, (unsigned char*)&enable_per_led_msg, sizeof(enable_per_led_msg));
+    // }
+}
 }
